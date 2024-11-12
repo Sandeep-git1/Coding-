@@ -1,0 +1,115 @@
+Check if a given string of parentheses is balanced.
+- Write a function isBalanced(s) that takes a string s containing parentheses
+(), {}, and [], and returns True if the string is balanced and False otherwise.
+- Use a stack to implement the solution.
+
+Solution:
+          #include <iostream>
+          #include <unordered_map>
+          
+          using namespace std;
+          
+          struct Node {
+              int key;
+              int value;
+              Node* prev;
+              Node* next;
+              Node(int k, int v) : key(k), value(v), prev(nullptr), next(nullptr) {}
+          };
+          
+          class LRUCache {
+          private:
+              int capacity;
+              int count;
+              Node* head;
+              Node* tail;
+              unordered_map<int, Node*> hashTable;
+          
+              void removeNode(Node* node) {
+                  if (node->prev) {
+                      node->prev->next = node->next;
+                  } else {
+                      head = node->next;
+                  }
+                  if (node->next) {
+                      node->next->prev = node->prev;
+                  } else {
+                      tail = node->prev;
+                  }
+              }
+          
+              void addToFront(Node* node) {
+                  node->next = head;
+                  node->prev = nullptr;
+                  if (head) {
+                      head->prev = node;
+                  }
+                  head = node;
+                  if (!tail) {
+                      tail = head;
+                  }
+              }
+          
+          public:
+              LRUCache(int cap) : capacity(cap), count(0), head(nullptr), tail(nullptr) {}
+          
+              int get(int key) {
+                  if (hashTable.find(key) == hashTable.end()) {
+                      return -1;
+                  }
+                  Node* node = hashTable[key];
+                  removeNode(node);
+                  addToFront(node);
+                  return node->value;
+              }
+          
+              void put(int key, int value) {
+                  if (hashTable.find(key) != hashTable.end()) {
+                      Node* node = hashTable[key];
+                      node->value = value;
+                      removeNode(node);
+                      addToFront(node);
+                  } else {
+                      Node* node = new Node(key, value);
+                      if (count == capacity) {
+                          hashTable.erase(tail->key);
+                          removeNode(tail);
+                          delete tail;
+                          count--;
+                      }
+                      addToFront(node);
+                      hashTable[key] = node;
+                      count++;
+                  }
+              }
+          
+              void printCache() {
+                  Node* node = head;
+                  while (node) {
+                      cout << "(" << node->key << ", " << node->value << ") ";
+                      node = node->next;
+                  }
+                  cout << endl;
+              }
+          };
+          
+          int main() {
+              int capacity = 3; // You can change this value to any desired capacity
+              LRUCache cache(capacity);
+          
+              cache.put(1, 10);
+              cache.put(2, 20);
+              cache.put(3, 30);
+              cout << "Cache after adding three elements: ";
+              cache.printCache();
+          
+              cache.get(2);
+              cout << "Cache after accessing key 2: ";
+              cache.printCache();
+          
+              cache.put(4, 40);
+              cout << "Cache after adding key 4 (and removing the LRU element): ";
+              cache.printCache();
+          
+              return 0;
+          }
