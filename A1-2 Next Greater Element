@@ -1,0 +1,72 @@
+Find the next greater element for each element of an array.
+- Write a function nextGreaterElement(arr) that returns an array where each
+element is replaced by the next greater element to its right. If there is no greater
+element, replace it with -1.
+- Use a stack to implement the solution efficiently.
+
+Solution Code: 
+
+                
+                #include <iostream>
+                using namespace std;
+                
+                struct Node
+                {
+                    int data;
+                    Node* next;
+                };
+                
+                bool hasCycle(Node* head)
+                {
+                    Node *slow = head, *fast = head;
+                
+                    while (fast != nullptr && fast->next != nullptr)
+                    {
+                        slow = slow->next;
+                        fast = fast->next->next;
+                
+                        if (slow == fast)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                
+                Node* newNode(int data)
+                {
+                    Node* node = new Node();
+                    node->data = data;
+                    node->next = nullptr;
+                    return node;
+                }
+                
+                int main()
+                {
+                    Node* head = newNode(10);
+                    head->next = newNode(20);
+                    head->next->next = newNode(30);
+                    head->next->next->next = newNode(40);
+                    head->next->next->next->next = newNode(50);
+                
+                
+                    head->next->next->next->next->next = head->next;
+                
+                    if (hasCycle(head))
+                    {
+                        cout << "Cycle detected" << endl;
+                    }
+                    else
+                    {
+                        cout << "No cycle detected" << endl;
+                    }
+                
+                    return 0;
+                }
+
+
+
+
+
+
+
